@@ -80,7 +80,7 @@ public final class XcosMessages {
     public static final String LOADING_BLOCKS = Messages.gettext("Loading blocks") + DOTS;
 
     /* Palette menu in palette browser */
-    public static final String LOAD_AS_PAL = Messages.gettext("Load as palette_hhh") + DOTS;
+    public static final String LOAD_AS_PAL = Messages.gettext("Load as palette") + DOTS;
     public static final String USER_DEFINED = Messages.gettext("User-Defined");
     public static final String REMOVE_USER_DEFINED = REMOVE;
     public static final String CREATE_CATEGORY = Messages.gettext("Create a category");
