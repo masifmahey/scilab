@@ -19,13 +19,14 @@ package org.scilab.modules.xcos.block.actions;
 import org.scilab.modules.graph.ScilabGraph;
 import org.scilab.modules.graph.actions.base.DefaultAction;
 import org.scilab.modules.graph.actions.base.SpecificCellSelectedConstraint;
-import org.scilab.modules.xcos.block.SuperBlock;
+//import org.scilab.modules.xcos.block.SuperBlock;
+import org.scilab.modules.xcos.block.NewSuperBlock;
 
 /**
  * An action which is only active when a {@link SuperBlock} is selected on the
  * graph.
  */
-public abstract class SuperBlockSelectedAction extends DefaultAction {
+public abstract class NewSuperBlockSelectedAction extends DefaultAction {
 
     /**
      * Default constructor
@@ -33,11 +34,11 @@ public abstract class SuperBlockSelectedAction extends DefaultAction {
      * @param scilabGraph
      *            The associated graph
      */
-    public SuperBlockSelectedAction(ScilabGraph scilabGraph) {
+    public NewSuperBlockSelectedAction(ScilabGraph scilabGraph) {
         super(scilabGraph);
 
         SpecificCellSelectedConstraint c = new SpecificCellSelectedConstraint(
-            SuperBlock.class);
+            NewSuperBlock.class);
         c.install(this, scilabGraph);
     }
 }

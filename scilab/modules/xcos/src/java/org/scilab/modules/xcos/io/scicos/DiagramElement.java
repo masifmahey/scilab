@@ -1,5 +1,5 @@
 /*
- * Scilab ( http://www.scilab.org/ ) - This file is part of Scilab
+ * Scilab ( https://www.scilab.org/ ) - This file is part of Scilab
  * Copyright (C) 2010 - DIGITEO - Clement DAVID
  * Copyright (C) 2011-2017 - Scilab Enterprises - Clement DAVID
  *
@@ -33,6 +33,7 @@ import org.scilab.modules.types.ScilabType;
 import org.scilab.modules.xcos.JavaController;
 import org.scilab.modules.xcos.block.BasicBlock;
 import org.scilab.modules.xcos.block.SuperBlock;
+import org.scilab.modules.xcos.block.NewSuperBlock;
 import org.scilab.modules.xcos.block.io.ContextUpdate.IOBlocks;
 import org.scilab.modules.xcos.graph.model.ScicosObjectOwner;
 import org.scilab.modules.xcos.graph.ScicosParameters;
@@ -336,10 +337,14 @@ public final class DiagramElement extends AbstractElement<XcosDiagram> {
 
     // update the labels of ports for SuperBlock
     private static final void updateLabels(final Object cell, final mxIGraphModel model) {
-        if (!(cell instanceof SuperBlock)) {
+        if (!(cell instanceof SuperBlock) || !cell instanceof NewSuperBlock) {
             return;
         }
-        final SuperBlock parent = (SuperBlock) cell;
+	if(!(cell instanceof SuperBlock)){
+		final NewSuperBlock parent = (NewSuperBlock) cell;
+	}else{
+        	final SuperBlock parent = (SuperBlock) cell;
+	}
 
         // Assume that the children are sorted after decode
         final Map<IOBlocks, List<mxICell>> ports = IOBlocks.getAllPorts(parent);
@@ -364,7 +369,9 @@ public final class DiagramElement extends AbstractElement<XcosDiagram> {
         // }
         // }
     }
+/*******************************************************************************************************************************************************/
 
+/*******************************************************************************************************************************************************/
     /**
      * Check that the current ScilabType is a valid Diagram.
      *

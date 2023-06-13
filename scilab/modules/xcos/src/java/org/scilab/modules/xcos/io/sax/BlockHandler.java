@@ -1,5 +1,5 @@
 /*
- * Scilab ( http://www.scilab.org/ ) - This file is part of Scilab
+ * Scilab ( https://www.scilab.org/ ) - This file is part of Scilab
  * Copyright (C) 2015-2015 - Scilab Enterprises - Clement DAVID
  * Copyright (C) 2017-2018 - ESI Group - Clement DAVID
  *
@@ -27,6 +27,7 @@ import org.scilab.modules.xcos.block.BasicBlock;
 import org.scilab.modules.xcos.block.BasicBlock.SimulationFunctionType;
 import org.scilab.modules.xcos.block.SplitBlock;
 import org.scilab.modules.xcos.block.SuperBlock;
+import org.scilab.modules.xcos.block.NewSuperBlock;
 import org.scilab.modules.xcos.block.TextBlock;
 import org.scilab.modules.xcos.block.io.EventInBlock;
 import org.scilab.modules.xcos.block.io.EventOutBlock;
@@ -147,6 +148,9 @@ class BlockHandler implements ScilabHandler {
                 break;
             case SuperBlock:
                 block = new SuperBlock(saxHandler.controller, uid, kind, value, null, style, strUID);
+                break;
+	    case NewSuperBlock:
+                block = new NewSuperBlock(saxHandler.controller, uid, kind, value, null, style, strUID);
                 break;
             case TextBlock:
                 block = new TextBlock(saxHandler.controller, uid, kind, value, null, style, strUID);

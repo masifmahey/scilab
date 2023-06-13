@@ -53,16 +53,16 @@ import org.scilab.modules.xcos.utils.XcosMessages;
 // CSOFF: ClassDataAbstractionCoupling
 // CSOFF: ClassFanOutComplexity
 @SuppressWarnings(value = { "serial" })
-public final class SuperBlock extends BasicBlock {
+public final class NewSuperBlock extends BasicBlock {
     /**
      * The interfunction name (linked to Xcos-core)
      */
-    public static final String INTERFUNCTION_NAME = "SUPER_f";
+    public static final String INTERFUNCTION_NAME = "SUPER_nf";
 
     /**
      * The simulation name (linked to Xcos-core)
      */
-    private static final String SIMULATION_NAME = "super";
+    private static final String SIMULATION_NAME = "super_n";
     /**
      * The simulation name on a masked status (linked to Xcos-core)
      */
@@ -72,7 +72,7 @@ public final class SuperBlock extends BasicBlock {
      */
     public static final String MASKED_INTERFUNCTION_NAME = "DSUPER";
 
-    public SuperBlock(JavaController controller, long uid, Kind kind, Object value, mxGeometry geometry, String style, String id) {
+    public NewSuperBlock(JavaController controller, long uid, Kind kind, Object value, mxGeometry geometry, String style, String id) {
         super(controller, uid, kind, value, geometry, style, id);
 
         controller.setObjectProperty(uid, kind, ObjectProperties.SIM_FUNCTION_NAME, SIMULATION_NAME);

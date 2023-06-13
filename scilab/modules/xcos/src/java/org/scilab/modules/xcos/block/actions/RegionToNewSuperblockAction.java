@@ -30,7 +30,6 @@ import org.scilab.modules.graph.ScilabGraph;
 import org.scilab.modules.graph.actions.base.VertexSelectionDependantAction;
 import org.scilab.modules.gui.menuitem.MenuItem;
 import org.scilab.modules.xcos.block.BasicBlock;
-import org.scilab.modules.xcos.block.SuperBlock;
 import org.scilab.modules.xcos.block.NewSuperBlock;
 import org.scilab.modules.xcos.block.io.ContextUpdate;
 import org.scilab.modules.xcos.block.io.ContextUpdate.IOBlocks;
@@ -69,6 +68,7 @@ import static org.scilab.modules.xcos.graph.XcosDiagram.EOUT;
 import static org.scilab.modules.xcos.graph.XcosDiagram.IN;
 import static org.scilab.modules.xcos.graph.XcosDiagram.OUT;
 import static org.scilab.modules.xcos.graph.XcosDiagram.UpdateSuperblockPortsTracker.syncPorts;
+//import static org.scilab.modules.xcos.graph.XcosDiagram.UpdateNewSuperblockPortsTracker.syncPorts;
 import org.scilab.modules.xcos.graph.model.XcosCell;
 import org.scilab.modules.xcos.graph.model.XcosCellFactory;
 import org.scilab.modules.xcos.io.ScilabTypeCoder;
@@ -79,9 +79,9 @@ import org.scilab.modules.xcos.utils.XcosConstants;
  */
 // CSOFF: ClassFanOutComplexity
 @SuppressWarnings(value = { "serial" })
-public class RegionToSuperblockAction extends VertexSelectionDependantAction {
+public class RegionToNewSuperblockAction extends VertexSelectionDependantAction {
     /** Name of the action */
-    public static final String NAME = XcosMessages.REGION_TO_SUPERBLOCK;
+    public static final String NAME = XcosMessages.REGION_TO_NEWSUPERBLOCK;
     /** Icon name of the action */
     public static final String SMALL_ICON = "object-group";
     /** Mnemonic key of the action */
@@ -89,7 +89,6 @@ public class RegionToSuperblockAction extends VertexSelectionDependantAction {
     /** Accelerator key for the action */
     public static final int ACCELERATOR_KEY = 0;
 
-    private static final String INTERFUNCTION_NAME = "SUPER_f";
     private static final String INTERFUNCTION_NAME_n = "SUPER_nf";
 
     /**
@@ -98,7 +97,7 @@ public class RegionToSuperblockAction extends VertexSelectionDependantAction {
      * @param scilabGraph
      *            the graph
      */
-    public RegionToSuperblockAction(ScilabGraph scilabGraph) {
+    public RegionToNewSuperblockAction(ScilabGraph scilabGraph) {
         super(scilabGraph);
     }
 
@@ -108,7 +107,7 @@ public class RegionToSuperblockAction extends VertexSelectionDependantAction {
      * @return menu item
      */
     public static MenuItem createMenu(ScilabGraph scilabGraph) {
-        return createMenu(scilabGraph, RegionToSuperblockAction.class);
+        return createMenu(scilabGraph, RegionToNewSuperblockAction.class);
     }
 
     /**
@@ -279,9 +278,9 @@ public class RegionToSuperblockAction extends VertexSelectionDependantAction {
                                      .newInstance(controller, uid, Kind.PORT, null, null, new UID().toString());;
                     }
                 } catch (ReflectiveOperationException e) {
-                    Logger.getLogger(RegionToSuperblockAction.class.getName()).severe(e.toString());
+                    Logger.getLogger(RegionToNewSuperblockAction.class.getName()).severe(e.toString());
                 } catch (IllegalArgumentException ex) {
-                    Logger.getLogger(RegionToSuperblockAction.class.getName()).log(Level.SEVERE, null, ex);
+                    Logger.getLogger(RegionToNewSuperblockAction.class.getName()).log(Level.SEVERE, null, ex);
                 }
             }
 
@@ -378,11 +377,11 @@ public class RegionToSuperblockAction extends VertexSelectionDependantAction {
             return;
         }
 
-        parentGraph.info(XcosMessages.GENERATE_SUPERBLOCK);
+        parentGraph.info(XcosMessages.GENERATE_NEWSUPERBLOCK);
         parentGraph.getModel().beginUpdate();
         try {
             final JavaController controller = new JavaController();
-            final SuperBlock superBlock;
+            final NewSuperBlock superBlock;
 	    //final NewSuperBlock newsuperBlock;
             final Collection<Broken> brokenLinks;
 
@@ -395,8 +394,8 @@ public class RegionToSuperblockAction extends VertexSelectionDependantAction {
                                        .map(o -> (XcosCell) o)
                                        .collect(toList());
 
-            superBlock = allocateSuperBlock(controller, parentGraph, selection);
-	    newsuperBlock = allocateNewSuperBlock(controller, parentGraph, selection);
+            superBlock = allocateNewSuperBlock(controller, parentGraph, selection);
+	    //newsuperBlock = allocateNewSuperBlock(controller, parentGraph, selection);
 
             /*
              * First perform all modification on the parent diagram to handle
@@ -524,7 +523,7 @@ public class RegionToSuperblockAction extends VertexSelectionDependantAction {
      * @return the allocated super block (without specific listeners)
      */
     private SuperBlock allocateSuperBlock(final JavaController controller, final XcosDiagram parentGraph, final Object[] selection) throws ScilabInterpreterManagement.InterpreterException {
-        final SuperBlock superBlock = (SuperBlock) XcosCellFactory.createBlock(INTERFUNCTION_NAME);
+        final SuperBlock superBlock = (SuperBlock) XcosCellFactory.createBlock(INTERFUNCTION_NAME_n);
 
         /*
          * Remove the default allocated ports
@@ -621,7 +620,7 @@ public class RegionToSuperblockAction extends VertexSelectionDependantAction {
      *            the cells in the selection
      * @return the broken descriptor set
      */
-    private Collection<Broken> updateParent(final JavaController controller, final XcosDiagram parentGraph, final SuperBlock superBlock, final List<XcosCell> inSelectionCells) {
+    private Collection<Broken> updateParent(final JavaController controller, final XcosDiagram parentGraph, final NewSuperBlock superBlock, final List<XcosCell> inSelectionCells) {
         final Collection<Broken> brokenLinks;
         final mxGraphModel parentModel = (mxGraphModel) parentGraph.getModel();
 
@@ -768,7 +767,7 @@ public class RegionToSuperblockAction extends VertexSelectionDependantAction {
      * @param broken
      *            the broken entry
      */
-    private void connectParent(final XcosDiagram parentGraph, final mxGraphModel parentModel, final SuperBlock superBlock, Broken broken) {
+    private void connectParent(final XcosDiagram parentGraph, final mxGraphModel parentModel, final NewSuperBlock superBlock, Broken broken) {
         parentGraph.addCell(broken.getParentPort(), superBlock);
         parentGraph.addCell(broken.getParentLink());
 
@@ -813,7 +812,7 @@ public class RegionToSuperblockAction extends VertexSelectionDependantAction {
      *            the cells in selection
      * @return the superblock child diagram
      */
-    private void moveToChild(final JavaController controller, final XcosDiagram parentGraph, final SuperBlock superBlock, final Collection<Broken> brokenLinks, final List<XcosCell> inSelectionCells) {
+    private void moveToChild(final JavaController controller, final XcosDiagram parentGraph, final NewSuperBlock superBlock, final Collection<Broken> brokenLinks, final List<XcosCell> inSelectionCells) {
         final Collection<XcosCell> cellsToCopy = new ArrayList<>();
 
         /*

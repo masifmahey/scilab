@@ -1,5 +1,5 @@
 /*
- * Scilab ( http://www.scilab.org/ ) - This file is part of Scilab
+ * Scilab ( https://www.scilab.org/ ) - This file is part of Scilab
  * Copyright (C) 2010 - DIGITEO - Clement DAVID
  * Copyright (C) 2011-2015 - Scilab Enterprises - Clement DAVID
  *
@@ -411,7 +411,11 @@ public final class ConfigurationManager {
 
             graph = new XcosDiagram(controller, controller.createObject(Kind.DIAGRAM), Kind.DIAGRAM, "");
             graph.installListeners();
+            try{
+                 graph.installNListeners();
+            }catch(Exception e){
 
+            }
             Xcos.getInstance().addDiagram(new ScicosObjectOwner(graph.getUID(), Kind.DIAGRAM), graph);
 
             if (f != null) {
