@@ -1,5 +1,5 @@
 /*
- * Scilab ( http://www.scilab.org/ ) - This file is part of Scilab
+ * Scilab ( https://www.scilab.org/ ) - This file is part of Scilab
  * Copyright (C) 2009 - DIGITEO - Vincent COUVERT
  * Copyright (C) 2010 - DIGITEO - Clement DAVID
  * Copyright (C) 2011-2015 - Scilab Enterprises - Clement DAVID
@@ -34,6 +34,7 @@ import org.scilab.modules.xcos.ObjectProperties;
 import org.scilab.modules.xcos.Xcos;
 import org.scilab.modules.xcos.XcosTab;
 import org.scilab.modules.xcos.block.BasicBlock;
+import org.scilab.modules.xcos.graph.ScicosParameters;
 import org.scilab.modules.xcos.graph.XcosDiagram;
 import org.scilab.modules.xcos.graph.model.BlockInterFunction;
 import org.scilab.modules.xcos.graph.model.ScicosObjectOwner;
@@ -128,6 +129,10 @@ public class BlockParametersAction extends VertexSelectionDependantAction {
                     // setup graphical interface
                     sub.getUndoManager().clear();
                     sub.installListeners();
+                    try{
+                        sub.installNListeners();
+                    }catch(Exception e){
+                    }
                 }
 
                 // restore the parent graph tab
@@ -181,7 +186,8 @@ public class BlockParametersAction extends VertexSelectionDependantAction {
 
                     ScilabDirectHandler handler = ScilabDirectHandler.acquire();
                     try {
-                        handler.writeContext(graph.getContext());
+                        ScicosParameters parameters = new ScicosParameters(Xcos.findRoot(graph), new ScicosObjectOwner(controller, graph.getUID(), graph.getKind()));
+                        handler.writeContext(parameters.getAllContext(controller));
                     } finally {
                         handler.release();
                     }

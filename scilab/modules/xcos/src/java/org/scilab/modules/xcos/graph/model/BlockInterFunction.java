@@ -1,5 +1,5 @@
 /*
- * Scilab ( http://www.scilab.org/ ) - This file is part of Scilab
+ * Scilab ( https://www.scilab.org/ ) - This file is part of Scilab
  * Copyright (C) 2011-2015 - Scilab Enterprises - Clement DAVID
  *
  * Copyright (C) 2012 - 2016 - Scilab Enterprises
@@ -18,6 +18,7 @@ import org.scilab.modules.xcos.block.AfficheBlock;
 import org.scilab.modules.xcos.block.BasicBlock;
 import org.scilab.modules.xcos.block.SplitBlock;
 import org.scilab.modules.xcos.block.SuperBlock;
+import org.scilab.modules.xcos.block.NewSuperBlock;
 import org.scilab.modules.xcos.block.TextBlock;
 import org.scilab.modules.xcos.block.io.EventInBlock;
 import org.scilab.modules.xcos.block.io.EventOutBlock;
@@ -45,6 +46,8 @@ public enum BlockInterFunction {
     SUPER_f(SuperBlock.class),
     /** @see SuperBlock */
     DSUPER(SuperBlock.class),
+    /** @see NewSuperBlock */
+    SUPER_nf(NewSuperBlock.class),
     /** @see AfficheBlock */
     AFFICH_m(AfficheBlock.class),
     /** @see ExplicitInBlock */

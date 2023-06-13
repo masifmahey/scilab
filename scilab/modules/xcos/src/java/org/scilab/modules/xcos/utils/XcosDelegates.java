@@ -1,5 +1,5 @@
 /*
- * Scilab ( http://www.scilab.org/ ) - This file is part of Scilab
+ * Scilab ( https://www.scilab.org/ ) - This file is part of Scilab
  * Copyright (C) 2012 - Scilab Enterprises - Clement David
  * Copyright (C) 2011-2015 - Scilab Enterprises - Clement DAVID
  *
@@ -55,6 +55,11 @@ public class XcosDelegates {
 
         final XcosDiagram diag = new XcosDiagram(controller, controller.createObject(Kind.DIAGRAM), Kind.DIAGRAM, "");
         diag.installListeners();
+         try{
+            diag.installNListeners();
+        }catch(Exception e){
+
+        }
 
         final XcosFileType filetype = XcosFileType.findFileType(xcosFile);
         filetype.load(xcosFile, diag);

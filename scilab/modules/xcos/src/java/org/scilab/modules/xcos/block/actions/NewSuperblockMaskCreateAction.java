@@ -32,7 +32,7 @@ import org.scilab.modules.types.ScilabType;
 import org.scilab.modules.xcos.JavaController;
 import org.scilab.modules.xcos.ObjectProperties;
 import org.scilab.modules.xcos.VectorOfDouble;
-import org.scilab.modules.xcos.block.SuperBlock;
+
 import org.scilab.modules.xcos.block.NewSuperBlock;
 import org.scilab.modules.xcos.graph.XcosDiagram;
 import org.scilab.modules.xcos.io.ScilabTypeCoder;
@@ -42,7 +42,7 @@ import org.scilab.modules.xcos.utils.XcosMessages;
  * Create a mask for the {@link SuperBlock}
  */
 @SuppressWarnings(value = { "serial" })
-public final class SuperblockMaskCreateAction extends DefaultAction {
+public final class NewSuperblockMaskCreateAction extends DefaultAction {
     /** Name of the action */
     public static final String NAME = XcosMessages.CREATE;
     /** Icon name of the action */
@@ -56,7 +56,7 @@ public final class SuperblockMaskCreateAction extends DefaultAction {
      * @param scilabGraph
      *            graph
      */
-    public SuperblockMaskCreateAction(ScilabGraph scilabGraph) {
+    public NewSuperblockMaskCreateAction(ScilabGraph scilabGraph) {
         super(scilabGraph);
     }
 
@@ -66,7 +66,7 @@ public final class SuperblockMaskCreateAction extends DefaultAction {
      * @return menu item
      */
     public static MenuItem createMenu(ScilabGraph scilabGraph) {
-        return createMenu(scilabGraph, SuperblockMaskCreateAction.class);
+        return createMenu(scilabGraph, NewSuperblockMaskCreateAction.class);
     }
 
     /**
@@ -86,7 +86,7 @@ public final class SuperblockMaskCreateAction extends DefaultAction {
             return;
         }
 
-        SuperBlock block = (SuperBlock) graph.getSelectionCell();
+        NewSuperBlock block = (NewSuperBlock) graph.getSelectionCell();
 
         JavaController controller = new JavaController();
         block.mask(controller);
@@ -119,7 +119,7 @@ public final class SuperblockMaskCreateAction extends DefaultAction {
             /*
              * Open the customization UI on a new mask creation
              */
-            GraphActionManager.getInstance(graph, SuperblockMaskCustomizeAction.class).actionPerformed(e);
+            GraphActionManager.getInstance(graph, NewSuperblockMaskCustomizeAction.class).actionPerformed(e);
         }
     }
 }

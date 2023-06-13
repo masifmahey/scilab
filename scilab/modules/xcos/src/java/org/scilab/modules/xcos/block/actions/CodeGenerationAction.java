@@ -1,5 +1,5 @@
 /*
- * Scilab ( http://www.scilab.org/ ) - This file is part of Scilab
+ * Scilab ( https://www.scilab.org/ ) - This file is part of Scilab
  * Copyright (C) 2009 - DIGITEO - Allan SIMON
  * Copyright (C) 2010-2011 - DIGITEO - Clement DAVID
  * Copyright (C) 2012-2016 - Scilab Enterprises - Clement DAVID
@@ -30,6 +30,7 @@ import org.scilab.modules.gui.menuitem.MenuItem;
 import org.scilab.modules.xcos.JavaController;
 import org.scilab.modules.xcos.block.BasicBlock;
 import org.scilab.modules.xcos.block.SuperBlock;
+import org.scilab.modules.xcos.block.NewSuperBlock;
 import org.scilab.modules.xcos.graph.XcosDiagram;
 import org.scilab.modules.xcos.graph.model.ScicosObjectOwner;
 import org.scilab.modules.xcos.graph.model.XcosCellFactory;
@@ -89,17 +90,22 @@ public class CodeGenerationAction extends SuperBlockSelectedAction {
         }
 
         Object selectedObj = graph.getSelectionCell();
-        if (!(selectedObj instanceof SuperBlock)) {
+        if (!(selectedObj instanceof SuperBlock) || !(selectedObj instanceof NewSuperBlock)) {
             graph.error(XcosMessages.ERROR_GENERATING_C_CODE);
             return;
         }
-
+	
+	
         graph.info(XcosMessages.GENERATING_C_CODE);
         graph.setCellsLocked(true);
         graph.getAsComponent().getGraphControl().setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
 
         final JavaController controller = new JavaController();
-        final SuperBlock block = (SuperBlock) selectedObj;
+        if(!(selectedObj instanceof SuperBlock)){
+		final NewSuperBlock block = (NewSuperBlock) selectedObj;
+	}else{
+		final SuperBlock block = (SuperBlock) selectedObj;
+	}
 
         try {
             /*

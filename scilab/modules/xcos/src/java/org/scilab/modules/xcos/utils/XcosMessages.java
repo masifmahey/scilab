@@ -1,5 +1,5 @@
 /*
- * Scilab ( http://www.scilab.org/ ) - This file is part of Scilab
+ * Scilab ( https://www.scilab.org/ ) - This file is part of Scilab
  * Copyright (C) 2009 - DIGITEO - Vincent COUVERT
  * Copyright (C) 2009 - DIGITEO - Clement DAVID
  * Copyright (C) 2011-2017 - Scilab Enterprises - Clement DAVID
@@ -59,6 +59,7 @@ public final class XcosMessages {
     public static final String EDIT = Messages.gettext("Edit");
     public static final String BLOCK_PARAMETERS = Messages.gettext("Block Parameters") + DOTS;
     public static final String REGION_TO_SUPERBLOCK = Messages.gettext("Selection to superblock");
+    public static final String REGION_TO_NEWSUPERBLOCK = Messages.gettext("Selection to Newsuperblock");
     public static final String SUPERBLOCK_MASK = Messages.gettext("Superblock mask");
     public static final String CREATE = Messages.gettext("Create");
     public static final String RENAME = Messages.gettext("Rename");
@@ -155,7 +156,7 @@ public final class XcosMessages {
     public static final String INTEGER_PAL = Messages.gettext("Integer");
     public static final String MATRIX_PAL = Messages.gettext("Matrix");
     public static final String SINKS_PAL = Messages.gettext("Sinks");
-    public static final String PORTACTION_PAL = Messages.gettext("Ports & Subsystems");
+    public static final String PORTACTION_PAL = Messages.gettext("Port & Subsystem");
     public static final String ANNOTATIONS_PAL = Messages.gettext("Annotations");
     public static final String DISCRETE_PAL = Messages.gettext("Discrete time systems");
     public static final String EVENTS_PAL = Messages.gettext("Event handling");
@@ -257,6 +258,7 @@ public final class XcosMessages {
     public static final String SIMULATION_IN_PROGRESS = Messages.gettext("Simulation in progress");
     public static final String COMPILATION_IN_PROGRESS = Messages.gettext("Compilation in progress, results will be stored in the \'cpr\' variable");
     public static final String GENERATE_SUPERBLOCK = Messages.gettext("Generate SuperBlock, please wait") + DOTS;
+    public static final String GENERATE_NEWSUPERBLOCK = Messages.gettext("Generate NewSuperBlock, please wait") + DOTS;
     public static final String DRAW_LINK = Messages.gettext("Click on diagram to add link point or on a compatible target to finish");
 
     /* Debug level messages */

@@ -1,5 +1,5 @@
 /*
- * Scilab ( http://www.scilab.org/ ) - This file is part of Scilab
+ * Scilab ( https://www.scilab.org/ ) - This file is part of Scilab
  * Copyright (C) 2010-2011 - DIGITEO - Clement DAVID
  * Copyright (C) 2011-2015 - Scilab Enterprises - Clement DAVID
  * Copyright (C) 2017-2018 - ESI Group - Clement DAVID
@@ -61,6 +61,7 @@ import org.scilab.modules.xcos.ObjectProperties;
 import org.scilab.modules.xcos.VectorOfInt;
 import org.scilab.modules.xcos.Xcos;
 import org.scilab.modules.xcos.block.SuperBlock;
+import org.scilab.modules.xcos.block.NewSuperBlock;
 import org.scilab.modules.xcos.block.io.ContextUpdate;
 import org.scilab.modules.xcos.graph.model.XcosCell;
 import org.scilab.modules.xcos.graph.model.XcosGraphModel;
@@ -408,6 +409,20 @@ public final class EditFormatAction extends DefaultAction {
                 Object superBlock = parentModel.getCell(jgraphxID[0]);
                 if (superBlock instanceof SuperBlock) {
                     List<mxICell> ports = ContextUpdate.IOBlocks.getPorts((SuperBlock) superBlock, (Class<? extends ContextUpdate>) cell.getClass());
+
+                    if (ports.size() >= portNumber) {
+                        mxICell port = ports.get(portNumber - 1);
+                        parentGraph.cellLabelChanged(port, oneliner, false);
+                        parentGraph.fireEvent(new mxEventObject(mxEvent.LABEL_CHANGED, "cell", port, "value", text, "parent", superBlock));
+                    }
+                }
+/*********************************************************************************************************************************************************/
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+/*********************************************************************************************************************************************************/
+		 if (superBlock instanceof NewSuperBlock) {
+                    List<mxICell> ports = ContextUpdate.IOBlocks.getPorts((NewSuperBlock) superBlock, (Class<? extends ContextUpdate>) cell.getClass());
 
                     if (ports.size() >= portNumber) {
                         mxICell port = ports.get(portNumber - 1);

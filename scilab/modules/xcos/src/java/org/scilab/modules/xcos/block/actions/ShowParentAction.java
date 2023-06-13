@@ -1,5 +1,5 @@
 /*
- * Scilab ( http://www.scilab.org/ ) - This file is part of Scilab
+ * Scilab ( https://www.scilab.org/ ) - This file is part of Scilab
  * Copyright (C) 2009 - DIGITEO - Vincent COUVERT
  * Copyright (C) 2010 - DIGITEO - Clement DAVID
  * Copyright (C) 2011-2015 - Scilab Enterprises - Clement DAVID
@@ -101,6 +101,11 @@ public class ShowParentAction extends DefaultAction {
                 parentGraph = new XcosDiagram(controller, parent[0], parentKind, "");
                 XcosCellFactory.insertChildren(controller, parentGraph);
                 parentGraph.installListeners();
+                 try{
+                     parentGraph.installNListeners();
+                }catch(Exception e){
+
+                }
 
                 Xcos.getInstance().addDiagram(Xcos.findRoot(controller, graph), parentGraph);
             }

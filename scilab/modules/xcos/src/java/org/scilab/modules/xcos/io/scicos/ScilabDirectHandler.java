@@ -1,5 +1,5 @@
 /*
- * Scilab ( http://www.scilab.org/ ) - This file is part of Scilab
+ * Scilab ( https://www.scilab.org/ ) - This file is part of Scilab
  * Copyright (C) 2011 - Scilab Enterprises - Clement DAVID
  *
  * Copyright (C) 2012 - 2016 - Scilab Enterprises
@@ -15,17 +15,28 @@
 
 package org.scilab.modules.xcos.io.scicos;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.Semaphore;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Logger;
 
+import org.scilab.modules.action_binding.highlevel.ScilabInterpreterManagement;
+import org.scilab.modules.action_binding.highlevel.ScilabInterpreterManagement.InterpreterException;
 import org.scilab.modules.javasci.JavasciException;
 import org.scilab.modules.javasci.Scilab;
 import org.scilab.modules.types.ScilabList;
 import org.scilab.modules.types.ScilabString;
 import org.scilab.modules.types.ScilabType;
+import org.scilab.modules.xcos.JavaController;
+import org.scilab.modules.xcos.ObjectProperties;
+import org.scilab.modules.xcos.VectorOfString;
+import org.scilab.modules.xcos.graph.XcosDiagram;
+import org.scilab.modules.xcos.graph.model.ScicosObjectOwner;
+import org.scilab.modules.xcos.graph.model.XcosCell;
+import org.scilab.modules.xcos.utils.Stack;
 
 /**
  * Scilab data direct access.
@@ -159,5 +170,38 @@ public class ScilabDirectHandler implements Handler {
         }
 
         LOG.exiting("ScilabDirectHandler", "writeContext");
+    }
+
+    /**
+     * Evaluate the context
+     *
+     * @return The resulting data. Keys are variable names and Values are
+     * evaluated values.
+     */
+    public Map<String, ScilabType> evaluateContext(final String[] context) {
+        LOG.entering("ScilabDirectHandler", "evaluateContext");
+        Map<String, ScilabType> result = Collections.emptyMap();
+
+        try {
+            // first write the context strings
+            writeContext(context);
+
+            // evaluate using script2var and convert to string keys and list of values
+            ScilabInterpreterManagement.synchronousScilabExec(ScilabDirectHandler.CONTEXT + " = script2var(" + ScilabDirectHandler.CONTEXT + ", struct()); "
+                 + ScilabDirectHandler.CONTEXT + "_names = fieldnames("+ScilabDirectHandler.CONTEXT+")'; "
+                 + ScilabDirectHandler.CONTEXT + "_values = list(); "
+                 + "for i=1:size(" + ScilabDirectHandler.CONTEXT + "_names, '*'); "
+                 + "   " + ScilabDirectHandler.CONTEXT + "_values(i) = " + ScilabDirectHandler.CONTEXT + "(" +  ScilabDirectHandler.CONTEXT + "_names(i)); "
+                 + "end; ");
+
+            // read the structure
+            result = readContext();
+        } catch (final InterpreterException e) {
+            LOG.warning("Unable to evaluate the context");
+            e.printStackTrace();
+        }
+
+        LOG.exiting("ScilabDirectHandler", "evaluateContext");
+        return result;
     }
 }

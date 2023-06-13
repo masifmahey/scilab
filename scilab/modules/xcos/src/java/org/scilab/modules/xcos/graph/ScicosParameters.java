@@ -1,5 +1,5 @@
 /*
- * Scilab ( http://www.scilab.org/ ) - This file is part of Scilab
+ * Scilab ( https://www.scilab.org/ ) - This file is part of Scilab
  * Copyright (C) 2010 - DIGITEO - Clement DAVID
  * Copyright (C) 2011-2017 - Scilab Enterprises - Clement DAVID
  *
@@ -20,15 +20,23 @@ import java.beans.PropertyChangeEvent;
 import java.beans.PropertyVetoException;
 import java.beans.VetoableChangeSupport;
 import java.io.Serializable;
+import java.util.ArrayList;
 
+import org.scilab.modules.types.ScilabList;
+import org.scilab.modules.types.ScilabString;
+import org.scilab.modules.types.ScilabType;
 import org.scilab.modules.xcos.JavaController;
 import org.scilab.modules.xcos.Kind;
 import org.scilab.modules.xcos.ObjectProperties;
 import org.scilab.modules.xcos.VectorOfDouble;
 import org.scilab.modules.xcos.VectorOfString;
 import org.scilab.modules.xcos.Xcos;
+import org.scilab.modules.xcos.block.SuperBlock;
+import org.scilab.modules.xcos.block.NewSuperBlock;
 import org.scilab.modules.xcos.graph.model.ScicosObjectOwner;
+import org.scilab.modules.xcos.io.ScilabTypeCoder;
 import org.scilab.modules.xcos.preferences.XcosOptions;
+import org.scilab.modules.xcos.utils.Stack;
 
 /**
  * Contains Scicos specific parameters.
@@ -236,4 +244,88 @@ public class ScicosParameters implements Serializable, Cloneable {
         vcs.fireVetoableChange(DEBUG_LEVEL_CHANGE, oldValue, debugLevel);
         controller.setObjectProperty(root.getUID(), root.getKind(), ObjectProperties.DEBUG_LEVEL, debugLevel);
     }
+
+
+    /**
+     * Fill the hierarchy from the first element up to the root diagram
+     * (included).
+     *
+     * @param controller the JavaController to use
+     * @return the filled collection (the root at the end)
+     */
+    public Stack<ScicosObjectOwner> lookForHierarchy(JavaController controller) {
+        Stack<ScicosObjectOwner> hierarchy = new Stack<>();
+
+        long[] parent = new long[] {current.getUID()};
+        if (current.getKind() == Kind.DIAGRAM) {
+            hierarchy.push(current);
+            return hierarchy;
+        }
+
+        while (parent[0] != 0l) {
+            hierarchy.push(new ScicosObjectOwner(controller, parent[0], Kind.BLOCK));
+            controller.getObjectProperty(parent[0], Kind.BLOCK, ObjectProperties.PARENT_BLOCK, parent);
+        }
+
+        controller.getObjectProperty(current.getUID(), current.getKind(), ObjectProperties.PARENT_DIAGRAM, parent);
+        hierarchy.push(new ScicosObjectOwner(controller, parent[0], Kind.DIAGRAM));
+
+        return hierarchy;
+    }
+
+
+    /**
+     * Get the {@link ObjectProperties#DIAGRAM_CONTEXT} applicable to the cell children
+     * @param controller current controller
+     * @param cell current cell DIAGRAM or BLOCK
+     * @return the user-entered context
+     */
+    public String[] getAllContext(JavaController controller) {
+        final ArrayList<String> allContext = new ArrayList<>();
+        final Stack<ScicosObjectOwner> hierarchy = lookForHierarchy(controller);
+
+        final VectorOfString context = new VectorOfString();
+
+        hierarchy.stream().forEach(o -> {
+            // set the context first
+            controller.getObjectProperty(o.getUID(), o.getKind(), ObjectProperties.DIAGRAM_CONTEXT, context);
+
+            final int length = context.size();
+            for (int i = 0; i < length; i++) {
+                allContext.add(context.get(i));
+            }
+            allContext.add("");
+
+            // in the case of mask presence, override previously defined variables
+            VectorOfDouble vec = new VectorOfDouble();
+            controller.getObjectProperty(o.getUID(), o.getKind(), ObjectProperties.EXPRS, vec);
+            if (vec.size() > 0) {
+                ScilabType rawExprs = new ScilabTypeCoder().vec2var(vec);
+                if (rawExprs instanceof ScilabList)
+                {
+                    ScilabList exprs = (ScilabList) rawExprs;
+                    if (exprs.size() == 2 && exprs.get(0) instanceof ScilabString && exprs.get(1) instanceof ScilabList)
+                    {
+                        ScilabString values = (ScilabString) exprs.get(0);
+                        ScilabList descr = (ScilabList) exprs.get(1);
+                        if (descr.size() > 1 && descr.get(0) instanceof ScilabString)
+                        {
+                            ScilabString varNames = (ScilabString) descr.get(0);
+                            if (values.getHeight() == varNames.getHeight())
+                            {
+                                for (int i = 0; i < values.getHeight(); i++)
+                                {
+                                    allContext.add(varNames.getData()[i][0] + " = " + values.getData()[i][0]);
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        });
+
+        return allContext.toArray(new String[allContext.size()]);
+    }
+
+
 }

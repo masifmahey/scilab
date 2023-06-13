@@ -1,5 +1,5 @@
 /*
- * Scilab ( http://www.scilab.org/ ) - This file is part of Scilab
+ * Scilab ( https://www.scilab.org/ ) - This file is part of Scilab
  * Copyright (C) 2009 - DIGITEO - Clement DAVID
  * Copyright (C) 2011-2017 - Scilab Enterprises - Clement DAVID
  *
@@ -35,6 +35,8 @@ import org.scilab.modules.xcos.JavaController;
 import org.scilab.modules.xcos.Kind;
 import org.scilab.modules.xcos.block.BasicBlock;
 import org.scilab.modules.xcos.block.SuperBlock;
+import org.scilab.modules.xcos.block.NewSuperBlock;
+import org.scilab.modules.xcos.io.ScilabTypeCoder;
 import org.scilab.modules.xcos.port.BasicPort;
 import org.scilab.modules.xcos.port.command.CommandPort;
 import org.scilab.modules.xcos.port.control.ControlPort;
@@ -50,6 +52,8 @@ import java.lang.reflect.InvocationTargetException;
 import java.rmi.server.UID;
 import java.util.logging.Level;
 import org.scilab.modules.xcos.ObjectProperties;
+import org.scilab.modules.xcos.VectorOfDouble;
+import org.scilab.modules.xcos.VectorOfInt;
 
 /**
  * Common class for the SuperBlock I/O blocks (represent ports)
@@ -237,6 +241,42 @@ public abstract class ContextUpdate extends BasicBlock {
             return ret;
         }
 
+/****************************************************************************************************/
+/////////////////////////////////////////////////////////////////////////////////////////////////////
+        /**
+         * Get all the port of the NewSuperBlock parent.
+         *
+         * @param parent
+         *            the parent
+         * @return the port list mapped by port type
+         */
+        public static Map<IOBlocks, List<mxICell>> getAllPorts(NewSuperBlock parent) {
+            final EnumMap<IOBlocks, List<mxICell>> ret = new EnumMap<IOBlocks, List<mxICell>>(IOBlocks.class);
+
+            /* Allocation */
+            for (IOBlocks b : IOBlocks.values()) {
+                ret.put(b, new ArrayList<mxICell>());
+            }
+
+            /* Loop all over the children */
+            final int childCount = parent.getChildCount();
+
+            for (int i = 0; i < childCount; i++) {
+                final mxICell child = parent.getChildAt(i);
+
+                /* if compatible add it to the list */
+                for (IOBlocks b : IOBlocks.values()) {
+                    if (child.getClass().equals(b.getReferencedPortClass())) {
+                        ret.get(b).add(child);
+                    }
+                }
+            }
+
+            return ret;
+        }
+//////////////////////////////////////////////////////////////////////////////////////////////////////
+/*****************************************************************************************************/
+
         /**
          * Get the ports of the super blocks with kind klass
          *
@@ -272,6 +312,46 @@ public abstract class ContextUpdate extends BasicBlock {
             return ret;
         }
 
+
+/*********************************************************************************************************/
+//////////////////////////////////////////////////////////////////////////////////////////////////////////
+        /**
+         * Get the ports of the super blocks with kind klass
+         *
+         * @param parent
+         *            the parent {@link NewSuperBlock}
+         * @param klass
+         *            the filter klass
+         * @return the list of ports
+         */
+        public static List<mxICell> getPorts(NewSuperBlock parent, Class<? extends ContextUpdate> klass) {
+            List<mxICell> ret = new ArrayList<mxICell>();
+
+            /* Get the corresponding klass */
+            Class<? extends BasicPort> portKlass = null;
+            for (IOBlocks b : IOBlocks.values()) {
+                if (b.getReferencedClass().equals(klass)) {
+                    portKlass = b.getAssignementCompatiblePortClass();
+                    break;
+                }
+            }
+
+            /* Loop all over the children */
+            final int childCount = parent.getChildCount();
+
+            for (int i = 0; i < childCount; i++) {
+                final mxICell child = parent.getChildAt(i);
+
+                if (portKlass.isInstance(child)) {
+                    ret.add(child);
+                }
+            }
+
+            return ret;
+        }
+//////////////////////////////////////////////////////////////////////////////////////////////////////////
+/*********************************************************************************************************/
+
         /**
          * Return the opposite of the port
          *
@@ -302,6 +382,22 @@ public abstract class ContextUpdate extends BasicBlock {
                 }
             }
             return null;
+        }
+
+        /**
+         * @return the context key to use for a block
+         */
+        public static String getContextKey(Object block) {
+            if (block instanceof ExplicitInBlock || block instanceof ImplicitInBlock) {
+                return "in";
+            } else if (block instanceof ExplicitOutBlock || block instanceof ImplicitOutBlock) {
+                return "out";
+            } else if (block instanceof EventInBlock) {
+                return "ein";
+            } else if (block instanceof EventOutBlock) {
+                return "eout";
+            }
+            return "";
         }
 
         /**
@@ -406,6 +502,23 @@ public abstract class ContextUpdate extends BasicBlock {
         super(controller, controller.createObject(Kind.BLOCK), Kind.BLOCK, null, new mxGeometry(0, 0, DEFAULT_WIDTH, DEFAULT_HEIGHT), blockName, new UID().toString());
 
         controller.setObjectProperty(getUID(), Kind.BLOCK, ObjectProperties.INTERFACE_FUNCTION, blockName);
+    }
+
+    
+
+    /**
+     * Set the ordering on the I/O block
+     * @param ordering
+     *            the ordering to set
+     */
+    public void setOrdering(JavaController controller, int ordering) {
+        // update the child ordering
+        VectorOfInt ipar = new VectorOfInt(1);
+        ipar.set(0, ordering);
+        controller.setObjectProperty(getUID(), Kind.BLOCK, ObjectProperties.IPAR, ipar);
+
+        VectorOfDouble exprs = new ScilabTypeCoder().var2vec(new ScilabString(Integer.toString(ordering)));
+        controller.setObjectProperty(getUID(), Kind.BLOCK, ObjectProperties.EXPRS, exprs);
     }
 
 
