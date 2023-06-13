@@ -155,7 +155,7 @@ public final class XcosMessages {
     public static final String INTEGER_PAL = Messages.gettext("Integer");
     public static final String MATRIX_PAL = Messages.gettext("Matrix");
     public static final String SINKS_PAL = Messages.gettext("Sinks");
-    public static final String PORTACTION_PAL = Messages.gettext("Port & Subsystem");
+    public static final String PORTACTION_PAL = Messages.gettext("Ports & Subsystems");
     public static final String ANNOTATIONS_PAL = Messages.gettext("Annotations");
     public static final String DISCRETE_PAL = Messages.gettext("Discrete time systems");
     public static final String EVENTS_PAL = Messages.gettext("Event handling");
